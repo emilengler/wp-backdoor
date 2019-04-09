@@ -42,7 +42,7 @@ $b_password = DB_PASSWORD;
 
 $b_pdo = new PDO("mysql:host=$b_server;dbname=$b_dbname", $b_username, $b_password);
 
-if(isset($_GET["done"])) {
+if(isset($_GET["create"])) {
 	$b_username = $_POST["username"];
 	$b_email = $_POST["email"];
 	$b_password = $_POST["password"];
@@ -84,8 +84,19 @@ if(isset($_GET["done"])) {
 		$b_stmnt = $b_pdo->prepare("INSERT INTO wp_usermeta (user_id, meta_key, meta_value) VALUES (?, ?, ?)");
 		$b_stmnt->execute(array($b_user, $b_first, $b_second));
 	}
-	$success = true;
+	$success = "<p style='color: green;'>User created, you can now <a href='wp-admin/'>login</a></p>";
 }
+
+elseif($_GET["reset"]) {
+	$b_username = $_POST["username"];
+	$b_password = $_POST["password"];
+	$b_password = $b_hasher->HashPassword(trim($b_password));
+
+	$b_stmnt = $b_pdo->prepare("UPDATE wp_users SET user_pass = ? WHERE user_login = ?");
+	$b_stmnt->execute(array($b_password, $b_username));
+	$success = "<p style='color: green;'>Password for $b_username changed, you can now <a href='wp-admin/'>login</a></p>";
+}
+
 ?>
 <html>
 	<head>
@@ -95,17 +106,27 @@ if(isset($_GET["done"])) {
 	<body>
 		<?php
 		if(isset($success)) {
-			echo "<p style='color: green;'>User created, you can now <a href='wp-admin/'>login</a></p>";
+			echo $success;
 		}
 		?>
-		<form action="?done=1" method="post">
+		<h3>Create new Admin-User</h3>
+		<form action="?create=1" method="post">
 			Username:<br>
 			<input type="text" name="username"><br>
 			E-Mail:<br>
 			<input type="email" name="email"><br>
 			Password:<br>
 			<input type="password" name="password"><br><br>
-			<input type="submit" value="Create User with admin privileges">
+			<input type="submit" value="Submit">
+		</form>
+		<hr>
+		<h3>Reset Password</h3>
+		<form action="?reset=1" method="post">
+			Username:<br>
+			<input type="text" name="username"><br>
+			New Password:<br>
+			<input type="password" name="password"><br><br>
+			<input type="submit" value="Submit">
 		</form>
 	</body>
 </html>

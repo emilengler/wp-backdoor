@@ -2,7 +2,9 @@
 This one-file tool allows you to quickly setup a backdoor on a wordpress installation.<br>
 Simply copy this file into the root directory of your wordpress installation.<br>
 <br>
-The tool allows you to create as many admin accounts as you want<br>
+##### Features
+* Create as unlimited admin accounts
+* Reset the password for any user
 <br>
 ### Disclaimer
 The software was created for testing purposes or the case if you forgot your wordpress credentinals.<br>
